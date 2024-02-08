@@ -77,7 +77,7 @@ leisure_verb_noun = SL_leisure[(SL_leisure.POS != 'PUNCT') & (SL_leisure.POS != 
                               & (SL_leisure.lowercaseLemma != 'decide')& (SL_leisure.lowercaseLemma != 'level') & (SL_leisure.lowercaseLemma != 's') & (SL_leisure.lowercaseLemma != 've') & (SL_leisure.lowercaseLemma != 'yesterday')
                               & (SL_leisure.lowercaseLemma != 'started') & (SL_leisure.lowercaseLemma != 'starting') & (SL_leisure.lowercaseLemma != 'start') & (SL_leisure.lowercaseLemma != 'play')  ]
 
-#print top 10 words that describe happy moments of leisure and creat word cloud of all the words from responses in the category
+#print top 10 words that describe happy moments of leisure and create word cloud of all the words from responses in the category
 print(leisure_verb_noun["lowercaseLemma"].value_counts().head(10))
 text = " ".join(str(lowercaseLemma) for lowercaseLemma in leisure_verb_noun.lowercaseLemma)
 wordcloud = WordCloud(background_color ='white', width = 400, height = 400, stopwords = list(STOPWORDS)).generate(text)
@@ -123,7 +123,7 @@ SL_exercise = SL_exercise.sort_values('hmid')
 #pull the most common words using the exercise dict file
 exercise_keywords = SL_exercise[SL_exercise['lowercaseLemma'].isin(exercise_list['Words'])]
 
-#print top 10 words that describe happy moments of leisure and creat word cloud of all the words from responses in the category
+#print top 10 words that describe happy moments of exercise and create word cloud of all the words from responses in the category
 print(exercise_keywords["lowercaseLemma"].value_counts().head(10))
 text = " ".join(str(lowercaseLemma) for lowercaseLemma in exercise_keywords.lowercaseLemma)
 wordcloud = WordCloud(background_color ='white', width = 400, height = 400, stopwords = list(STOPWORDS)).generate(text)
@@ -268,7 +268,7 @@ df_parent['values'] = p_values
 df_parent['counts'] = p_counts
 df_parent = df_parent.drop(['achievement', 'affection', 'bonding', 'enjoy_the_moment', 'nature'])
 
-#percentage of total male responses for more accurate comparison
+#percentage of total parent responses for more accurate comparison
 df_parent = pd.DataFrame((df_parent['counts'] / sum(p_counts))*100)
 
 #find the wid of non-parent respondents and match it in the cleaned data 
@@ -390,7 +390,7 @@ df_sixtyone_100['counts'] = sixtyone_100_counts
 df_sixtyone_100 = df_sixtyone_100.drop(['achievement', 'affection', 'bonding', 'enjoy_the_moment', 'nature'])
 df_sixtyone_100 = pd.DataFrame((df_sixtyone_100['counts'] / sum(sixtyone_100_counts))*100)
 
-#create datframe of exercise and leisure data for plots
+#create dataframe of exercise and leisure data for plots
 zero_30_le_ex = pd.DataFrame([df_zero_30.iloc[0], df_zero_30.iloc[1]])
 thirtyone_60_le_ex = pd.DataFrame([df_thirtyone_60.iloc[0], df_thirtyone_60.iloc[1]])
 sixtyone_100_le_ex = pd.DataFrame([df_sixtyone_100.iloc[0], df_sixtyone_100.iloc[1]])
