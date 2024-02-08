@@ -1,13 +1,13 @@
 # Applied Data Science @ Columbia
-## Fall 2023
+## Spring 2023
 ## Project 1: What made you happy today?
 
 ![image](figs/title.jpeg)
 
 ### [Do people find more happiness in exercise or leisure?](doc/Proj1_desc.md)
-This is the first and only *individual* (as opposed to *team*) this semester. 
 
-Term: Sprint 2024
+
+Term: Spring 2024
 
 + Projec title: Leisure or Exercise? What to do to achieve happiness and how does this change over time?
 + This project is conducted by [Nicolette Auld-Griffith]
