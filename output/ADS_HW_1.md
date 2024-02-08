@@ -9,17 +9,20 @@ Based on the word frequency chart, it is obvious that leisure activities brought
 import pandas as pd
 import matplotlib.pyplot as plt
 
+#get unique values of each happy moment category
 cleaned_hm = pd.read_csv("HappyDB/happydb/data/cleaned_hm.csv")
 unique_val = pd.DataFrame(cleaned_hm["predicted_category"].value_counts())
 values = cleaned_hm['predicted_category'].value_counts().keys().tolist()
 counts = cleaned_hm['predicted_category'].value_counts().tolist()
 
+#create dateframe of unique values and drop the data we don't need
 df = pd.DataFrame(index = values)
 df['values'] = values
 df['counts'] = counts
 df = df.drop(['achievement', 'affection', 'bonding', 'enjoy_the_moment', 'nature'])
 print(counts)
 
+#plot exercise vs leisure
 ax = df.plot(kind = 'barh')
 ax.legend_ = None
 ax.set_xlabel("Word Frequency", labelpad = 20, size = 12)
@@ -49,10 +52,14 @@ Based on the word cloud, its evident that activities relating to watching someth
 #common words used in happy moments based on leisure
 
 from wordcloud import WordCloud, STOPWORDS
+
+#find the hmid of responses that were categorized as lesiure and match it in the sense label file
 hmid_leisure = cleaned_hm[cleaned_hm['predicted_category'] ==  'leisure']['hmid']
 senselabel = pd.read_csv("HappyDB/happydb/data/senselabel.csv")
 SL_leisure = senselabel[senselabel['hmid'].isin(hmid_leisure)]
 SL_leisure = SL_leisure.sort_values('hmid')
+
+#remove common words that aren't helpful in describing the happy moments
 leisure_verb_noun = SL_leisure[(SL_leisure.POS != 'PUNCT') & (SL_leisure.POS != 'PRON') & (SL_leisure.POS != 'ADJ') & (SL_leisure.POS != 'ADV')
           & (SL_leisure.POS != 'NUM') & (SL_leisure.POS != 'DET') & (SL_leisure.POS != 'PRT') & (SL_leisure.POS != 'ADP') 
                                & (SL_leisure.POS != 'CONJ') & (SL_leisure.POS != 'X') & (SL_leisure.lowercaseLemma != 'i') & (SL_leisure.lowercaseLemma != 'be')
@@ -69,6 +76,8 @@ leisure_verb_noun = SL_leisure[(SL_leisure.POS != 'PUNCT') & (SL_leisure.POS != 
                               & (SL_leisure.lowercaseLemma != 'getting')& (SL_leisure.lowercaseLemma != 're')& (SL_leisure.lowercaseLemma != 'try') & (SL_leisure.lowercaseLemma != 's')& (SL_leisure.lowercaseLemma != 'm')
                               & (SL_leisure.lowercaseLemma != 'decide')& (SL_leisure.lowercaseLemma != 'level') & (SL_leisure.lowercaseLemma != 's') & (SL_leisure.lowercaseLemma != 've') & (SL_leisure.lowercaseLemma != 'yesterday')
                               & (SL_leisure.lowercaseLemma != 'started') & (SL_leisure.lowercaseLemma != 'starting') & (SL_leisure.lowercaseLemma != 'start') & (SL_leisure.lowercaseLemma != 'play')  ]
+
+#print top 10 words that describe happy moments of leisure and creat word cloud of all the words from responses in the category
 print(leisure_verb_noun["lowercaseLemma"].value_counts().head(10))
 text = " ".join(str(lowercaseLemma) for lowercaseLemma in leisure_verb_noun.lowercaseLemma)
 wordcloud = WordCloud(background_color ='white', width = 400, height = 400, stopwords = list(STOPWORDS)).generate(text)
@@ -105,12 +114,16 @@ For happy moments based in exercise, it seems like people enjoy going to the gym
 #common words used in happy moments based on exercise
 from wordcloud import WordCloud, STOPWORDS
 
+#find the hmid of responses that were categorized as exercise and match it in the sense label file
 exercise_list = pd.read_csv("HappyDB/happydb/data/topic_dict/exercise-dict.csv")
 hmid_exercise = cleaned_hm[cleaned_hm['predicted_category'] ==  'exercise']['hmid']
 SL_exercise = senselabel[senselabel['hmid'].isin(hmid_exercise)]
 SL_exercise = SL_exercise.sort_values('hmid')
+
+#pull the most common words using the exercise dict file
 exercise_keywords = SL_exercise[SL_exercise['lowercaseLemma'].isin(exercise_list['Words'])]
 
+#print top 10 words that describe happy moments of leisure and creat word cloud of all the words from responses in the category
 print(exercise_keywords["lowercaseLemma"].value_counts().head(10))
 text = " ".join(str(lowercaseLemma) for lowercaseLemma in exercise_keywords.lowercaseLemma)
 wordcloud = WordCloud(background_color ='white', width = 400, height = 400, stopwords = list(STOPWORDS)).generate(text)
@@ -154,6 +167,7 @@ import numpy as np
 cleaned_hm = pd.read_csv("HappyDB/happydb/data/cleaned_hm.csv")
 demographic = pd.read_csv("HappyDB/happydb/data/demographic.csv")
 
+#find the wid of female respondents and match it in the cleaned data 
 wid_female = demographic[demographic['gender'] ==  'f']['wid']
 female = cleaned_hm[cleaned_hm['wid'].isin(wid_female)]
 female = female.sort_values('wid')
@@ -161,13 +175,16 @@ f_unique_val = pd.DataFrame(female["predicted_category"].value_counts())
 f_values = female['predicted_category'].value_counts().keys().tolist()
 f_counts = female['predicted_category'].value_counts().tolist()
 
-
+#create dataframe of unique values of female responses and drop data we don't need
 df_female = pd.DataFrame(index = f_values)
 df_female['values'] = f_values
 df_female['counts'] = f_counts
 df_female = df_female.drop(['achievement', 'affection', 'bonding', 'enjoy_the_moment', 'nature'])
+
+#percentage of total female responses for more accurate comparison
 df_female = pd.DataFrame((df_female['counts'] / sum(f_counts))*100)
 
+#find the wid of male respondents and match it in the cleaned data 
 wid_male = demographic[demographic['gender'] ==  'm']['wid']
 male = cleaned_hm[cleaned_hm['wid'].isin(wid_male)]
 male = male.sort_values('wid')
@@ -175,12 +192,16 @@ m_unique_val = pd.DataFrame(male["predicted_category"].value_counts())
 m_values = male['predicted_category'].value_counts().keys().tolist()
 m_counts = male['predicted_category'].value_counts().tolist()
 
+#create dataframe of unique values of male responses and drop data we don't need
 df_male = pd.DataFrame(index = m_values)
 df_male['values'] = m_values
 df_male['counts'] = m_counts
 df_male = df_male.drop(['achievement', 'affection', 'bonding', 'enjoy_the_moment', 'nature'])
+
+#percentage of total male responses for more accurate comparison
 df_male = pd.DataFrame((df_male['counts'] / sum(m_counts))*100)
 
+#create datframe of exercise and leisure data we need for plot
 female_le_ex = pd.DataFrame([df_female.iloc[0], df_female.iloc[1]])
 male_le_ex = pd.DataFrame([df_male.iloc[0], df_male.iloc[1]])
 index = ['female', 'male']
@@ -233,6 +254,7 @@ import numpy as np
 cleaned_hm = pd.read_csv("HappyDB/happydb/data/cleaned_hm.csv")
 demographic = pd.read_csv("HappyDB/happydb/data/demographic.csv")
 
+#find the wid of parent respondents and match it in the cleaned data 
 wid_parent = demographic[demographic['parenthood'] ==  'y']['wid']
 parent = cleaned_hm[cleaned_hm['wid'].isin(wid_parent)]
 parent = parent.sort_values('wid')
@@ -240,13 +262,16 @@ p_unique_val = pd.DataFrame(parent["predicted_category"].value_counts())
 p_values = parent['predicted_category'].value_counts().keys().tolist()
 p_counts = parent['predicted_category'].value_counts().tolist()
 
-
+#create dataframe of unique values of parent responses and drop data we don't need
 df_parent = pd.DataFrame(index = p_values)
 df_parent['values'] = p_values
 df_parent['counts'] = p_counts
 df_parent = df_parent.drop(['achievement', 'affection', 'bonding', 'enjoy_the_moment', 'nature'])
+
+#percentage of total male responses for more accurate comparison
 df_parent = pd.DataFrame((df_parent['counts'] / sum(p_counts))*100)
 
+#find the wid of non-parent respondents and match it in the cleaned data 
 wid_nonparent = demographic[demographic['parenthood'] ==  'n']['wid']
 nonparent = cleaned_hm[cleaned_hm['wid'].isin(wid_nonparent)]
 nonparent = nonparent.sort_values('wid')
@@ -254,12 +279,14 @@ np_unique_val = pd.DataFrame(nonparent["predicted_category"].value_counts())
 np_values = nonparent['predicted_category'].value_counts().keys().tolist()
 np_counts = nonparent['predicted_category'].value_counts().tolist()
 
+#create dataframe of unique values of non-parent responses and drop data we don't need
 df_nonparent = pd.DataFrame(index = np_values)
 df_nonparent['values'] = np_values
 df_nonparent['counts'] = np_counts
 df_nonparent = df_nonparent.drop(['achievement', 'affection', 'bonding', 'enjoy_the_moment', 'nature'])
 df_nonparent = pd.DataFrame((df_nonparent['counts'] / sum(np_counts))*100)
 
+#create datframe of exercise and leisure data we need for plot
 parent_le_ex = pd.DataFrame([df_parent.iloc[0], df_parent.iloc[1]])
 nonparent_le_ex = pd.DataFrame([df_nonparent.iloc[0], df_nonparent.iloc[1]])
 index = ['parents', 'non-parents']
@@ -312,11 +339,11 @@ import numpy as np
 cleaned_hm = pd.read_csv("HappyDB/happydb/data/cleaned_hm.csv")
 demographic = pd.read_csv("HappyDB/happydb/data/demographic.csv")
 
-
+#make the ages integers and remove non-numeric age data
 demographic['age'] = pd.to_numeric(demographic['age'], errors = 'coerce')
 demographic = demographic[demographic['age'].notna()].astype({'age': int})
 
-#age 10-30
+#pull the wid for respondents age 10-30 and get unique values
 wid_zero_30 = demographic[(demographic['age'] >=  0) & (demographic['age'] <= 30)]['wid']
 zero_30 = cleaned_hm[cleaned_hm['wid'].isin(wid_zero_30)]
 zero_30 = zero_30.sort_values('wid')
@@ -324,6 +351,7 @@ zero_30_unique_val = pd.DataFrame(zero_30["predicted_category"].value_counts())
 zero_30_values = zero_30['predicted_category'].value_counts().keys().tolist()
 zero_30_counts = zero_30['predicted_category'].value_counts().tolist()
 
+#create dataframe of unique values, drop data we don't need, and caluclate percentage of total responses in age group
 df_zero_30 = pd.DataFrame(index = zero_30_values)
 df_zero_30['values'] = zero_30_values
 df_zero_30['counts'] = zero_30_counts
@@ -331,7 +359,7 @@ df_zero_30 = df_zero_30.drop(['achievement', 'affection', 'bonding', 'enjoy_the_
 df_zero_30 = pd.DataFrame((df_zero_30['counts'] / sum(zero_30_counts))*100)
 
 
-#age 31-60
+#pull the wid for respondents age 31-60 and get unique values
 wid_thirtyone_60 = demographic[(demographic['age'] >=  31) & (demographic['age'] <= 60)]['wid']
 thirtyone_60= cleaned_hm[cleaned_hm['wid'].isin(wid_thirtyone_60)]
 thirtyone_60 = thirtyone_60.sort_values('wid')
@@ -339,6 +367,7 @@ thirtyone_60_unique_val = pd.DataFrame(thirtyone_60["predicted_category"].value_
 thirtyone_60_values = thirtyone_60['predicted_category'].value_counts().keys().tolist()
 thirtyone_60_counts = thirtyone_60['predicted_category'].value_counts().tolist()
 
+#create dataframe of unique values, drop data we don't need, and caluclate percentage of total responses in age group
 df_thirtyone_60 = pd.DataFrame(index = thirtyone_60_values)
 df_thirtyone_60['values'] = thirtyone_60_values
 df_thirtyone_60['counts'] = thirtyone_60_counts
@@ -346,7 +375,7 @@ df_thirtyone_60 = df_thirtyone_60.drop(['achievement', 'affection', 'bonding', '
 df_thirtyone_60 = pd.DataFrame((df_thirtyone_60['counts'] / sum(thirtyone_60_counts))*100)
 
 
-#age 61-100
+##pull the wid for respondents age 61-100 and get unique values
 wid_sixtyone_100 = demographic[(demographic['age'] >=  61) & (demographic['age'] <= 100)]['wid']
 sixtyone_100 = cleaned_hm[cleaned_hm['wid'].isin(wid_sixtyone_100)]
 sixtyone_100 = sixtyone_100.sort_values('wid')
@@ -354,18 +383,20 @@ sixtyone_100_unique_val = pd.DataFrame(sixtyone_100["predicted_category"].value_
 sixtyone_100_values = sixtyone_100['predicted_category'].value_counts().keys().tolist()
 sixtyone_100_counts = sixtyone_100['predicted_category'].value_counts().tolist()
 
-
+#create dataframe of unique values, drop data we don't need, and caluclate percentage of total responses in age group
 df_sixtyone_100 = pd.DataFrame(index = sixtyone_100_values)
 df_sixtyone_100['values'] = sixtyone_100_values
 df_sixtyone_100['counts'] = sixtyone_100_counts
 df_sixtyone_100 = df_sixtyone_100.drop(['achievement', 'affection', 'bonding', 'enjoy_the_moment', 'nature'])
 df_sixtyone_100 = pd.DataFrame((df_sixtyone_100['counts'] / sum(sixtyone_100_counts))*100)
 
-#plots
+#create datframe of exercise and leisure data for plots
 zero_30_le_ex = pd.DataFrame([df_zero_30.iloc[0], df_zero_30.iloc[1]])
 thirtyone_60_le_ex = pd.DataFrame([df_thirtyone_60.iloc[0], df_thirtyone_60.iloc[1]])
 sixtyone_100_le_ex = pd.DataFrame([df_sixtyone_100.iloc[0], df_sixtyone_100.iloc[1]])
 index = ['0-30', '31-60', '61-90']
+
+#plots
 ax_30 = zero_30_le_ex.plot(kind = 'barh')
 ax_30.legend_ = None
 ax_30.set_xlabel("% of Happy Moments of People Aged 0-30", labelpad=20, size=12)
